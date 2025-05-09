@@ -1,0 +1,17 @@
+{
+  "name": "Backend-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "private": true
+}
