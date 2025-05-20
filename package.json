@@ -6,6 +6,13 @@
     "build": "tsc",
     "start": "ts-node ./src/main.ts"
   },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "printWidth": 120,
+    "tabWidth": 2,
+    "endOfLine": "lf"
+  },
   "dependencies": {
     "express": "^5.1.0",
     "pino": "^9.7.0",
@@ -27,6 +34,5 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1"
-  },
-  "private": true
+  }
 }
