@@ -1,4 +1,5 @@
 import express from 'express';
+import logger from './logger/pino.logger';
 
 const server = express();
 server.use(express.json()); // Включаем парсер тела
@@ -62,5 +63,5 @@ server.delete('/task/:id', (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server is started on port ${port}...`);
+  logger.info(`Это победа 🎉🎉🎉 ${port}...`);
 });
