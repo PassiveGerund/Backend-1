@@ -71,5 +71,5 @@ server.delete('/task/:id', (req, res) => {
 });
 
 server.listen(port, () => {
-  logger.info(`Это победа 🎉🎉🎉 ${port}....`);
+  logger.info(`Это победа 🎉🎉🎉 ${port}...`);
 });
