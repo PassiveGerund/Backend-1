@@ -15,7 +15,6 @@ userRouter.get('/:id/news/:newsId', (req, res) => {
   logger.info(`Держите новости ${id}  ${newsId}!`);
   res.send(`Держите новости ${id}  ${newsId}!`);
 });
-
 userRouter.get('', (req, res) => {
   logger.info(`Список пользователей`);
   res.send(`Список пользователей`);
