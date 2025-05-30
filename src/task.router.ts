@@ -30,13 +30,13 @@ taskRouter.get('/my/assigned', (req, res) => {
 taskRouter.put('/:id', (req, res) => {
   const id: string = req.params.id;
   logger.info(`Пришел запрос с методом PUT. Обновить задачу ${id}`);
-  res.send('Обновить задачу');
+  res.send(`Пришел запрос с методом PUT. Обновить задачу ${id}`);
 });
 
 taskRouter.delete('/:id', (req, res) => {
   const id: string = req.params.id;
   logger.info(`Пришел запрос с методом DELETE. Обновить задачу ${id}`);
-  res.send('Удалить задачу');
+  res.send(`Пришел запрос с методом DELETE. Обновить задачу ${id}`);
 });
 
 export default taskRouter;
