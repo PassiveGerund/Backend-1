@@ -13,6 +13,7 @@
     "tabWidth": 2
   },
   "dependencies": {
+    "class-validator": "^0.14.2",
     "express": "^4.21.2",
     "koffi": "^2.11.0",
     "pino": "^9.7.0",
