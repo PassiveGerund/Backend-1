@@ -1,8 +1,7 @@
-import { plainToInstance } from 'class-transformer';
-import { validateSync } from 'class-validator';
 import express from 'express';
 import logger from '../../logger/pino.logger';
-import { RegisterUserDto } from './dto';
+import { validate } from '../../validate';
+import { LoginUserDto, RegisterUserDto } from './dto';
 
 const userRouter = express.Router();
 userRouter.get('/:id', (req, res) => {
@@ -18,13 +17,6 @@ userRouter.get('/:id', (req, res) => {
   res.send(`Пользователь ${id}, держите новости!`);
 });
 
-userRouter.get('/:id/news/:newsId', (req, res) => {
-  const id: string = req.params.id;
-  const newsId: string = req.params.newsId;
-  logger.info(`Держите новости ${id}  ${newsId}!`);
-  res.send(`Держите новости ${id}  ${newsId}!`);
-});
-
 userRouter.get('', (req, res) => {
   logger.info(`Список пользователей`);
   res.send(`Список пользователей`);
@@ -32,20 +24,20 @@ userRouter.get('', (req, res) => {
 
 userRouter.post('', (req, res) => {});
 
+userRouter.post('/login', (req, res) => {
+  logger.info(`Логин`);
+
+  const dto = validate(LoginUserDto, req.body);
+
+  console.log(dto);
+
+  res.send(`Запрос на вход`);
+});
+
 userRouter.post('/register', (req, res) => {
   logger.info(`Запрос на регистрацию`);
 
-  const dto = plainToInstance(RegisterUserDto, req.body);
-  const errors = validateSync(dto);
-  if (errors.length) {
-    const [{ constraints }] = errors;
-
-    if (constraints) {
-      throw new Error(constraints[Object.keys(constraints)[0]]);
-    }
-
-    throw new Error('Неизвестная ошибка');
-  }
+  const dto = validate(RegisterUserDto, req.body);
 
   console.log(dto);
 
