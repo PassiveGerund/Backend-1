@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from '../logger/pino.logger';
+import logger from '../../logger/pino.logger';
 
 const taskRouter = express.Router();
 

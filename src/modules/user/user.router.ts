@@ -1,5 +1,8 @@
+import { plainToInstance } from 'class-transformer';
+import { validateSync } from 'class-validator';
 import express from 'express';
-import logger from '../logger/pino.logger';
+import logger from '../../logger/pino.logger';
+import { RegisterUserDto } from './dto';
 
 const userRouter = express.Router();
 userRouter.get('/:id', (req, res) => {
@@ -26,26 +29,26 @@ userRouter.get('', (req, res) => {
   logger.info(`Список пользователей`);
   res.send(`Список пользователей`);
 });
-userRouter.get('/:id/friends', (req, res) => {
-  const id: string = req.params.id;
-  logger.info(`Друзья пользователя ${id}`);
-  res.send(`Друзья пользователя ${id}`);
-});
-userRouter.get('/:id/audios', (req, res) => {
-  const id: string = req.params.id;
-  logger.info(`Аудио пользователя ${id}`);
-  res.send(`Аудио пользователя ${id}`);
-});
-userRouter.get('/:id/photos', (req, res) => {
-  const id: string = req.params.id;
-  logger.info(`Фото пользователя ${id}`);
-  res.send(`Фото пользователя ${id}`);
-});
 
 userRouter.post('', (req, res) => {});
 
 userRouter.post('/register', (req, res) => {
   logger.info(`Запрос на регистрацию`);
+
+  const dto = plainToInstance(RegisterUserDto, req.body);
+  const errors = validateSync(dto);
+  if (errors.length) {
+    const [{ constraints }] = errors;
+
+    if (constraints) {
+      throw new Error(constraints[Object.keys(constraints)[0]]);
+    }
+
+    throw new Error('Неизвестная ошибка');
+  }
+
+  console.log(dto);
+
   res.send(`Запрос на регистрацию`);
 });
 
