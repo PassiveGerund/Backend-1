@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from './logger/pino.logger';
+import logger from '../../logger/pino.logger';
 
 const taskRouter = express.Router();
 
@@ -35,8 +35,8 @@ taskRouter.put('/:id', (req, res) => {
 
 taskRouter.delete('/:id', (req, res) => {
   const id: string = req.params.id;
-  logger.info(`Пришел запрос с методом DELETE. Обновить задачу ${id}`);
-  res.send(`Пришел запрос с методом DELETE. Обновить задачу ${id}`);
+  logger.info(`Пришел запрос с методом DELETE. Обновить задачу ${id} `);
+  res.send(`Пришел запрос с методом DELETE. Обновить задачу ${id}, `);
 });
 
 export default taskRouter;
