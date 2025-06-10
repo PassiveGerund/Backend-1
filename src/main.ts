@@ -1,29 +1,30 @@
+import 'reflect-metadata';
+import dotenv from 'dotenv';
 import express from 'express';
 import { logRoutes } from './bootstrap/log-routers';
+import { envDto } from './config/dto/envDto';
 import logger from './logger/pino.logger';
-import { middleware1 } from './middlewares';
-import taskRouter from './modules/task.router';
-import userRouter from './modules/user.router';
+import { errorHandler } from './middlewares/error-handler';
+import taskRouter from './modules/task/task.router';
+import userRouter from './modules/user/user.router';
+import { validate } from './validate';
 
 const server = express();
+server.use(express.json()); // Включаем парсер тела
 
-server.use('/user', middleware1);
 server.use('/user', userRouter);
 
 server.use('/task', taskRouter);
+server.use(errorHandler);
 
-server.use(express.json()); // Включаем парсер тела
+dotenv.config();
 
-const port = 2000;
+const port = Number(process.env.PORT);
 
 logRoutes(server);
-
-// server.use(middleware1);
-// server.use(middleware2);
-// server.use(middleware3);
-
 server.get('', (req, res) => {
   console.log('Начало обработки запроса!');
+  validate(envDto, port);
   res.send('Hello World!');
 });
 
