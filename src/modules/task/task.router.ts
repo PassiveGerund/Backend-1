@@ -1,5 +1,7 @@
 import express from 'express';
 import logger from '../../logger/pino.logger';
+import { validate } from '../../validate';
+import { CreateTastDto } from './dto/CreateTastDto';
 
 const taskRouter = express.Router();
 
@@ -13,8 +15,11 @@ taskRouter.get('/:id', (req, res) => {
   res.send(`Задача ${id}`);
 });
 taskRouter.post('', (req, res) => {
+  const params = req.body;
+  validate(CreateTastDto, req.body);
+  logger.info(params);
   logger.info('Пришел запрос с методом POST. Создать задачу');
-  res.send('Создать задачу');
+  res.send('Пришел запрос с методом POST. Создать задачу');
 });
 
 taskRouter.get('/my/authored', (req, res) => {
