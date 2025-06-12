@@ -1,5 +1,4 @@
-import { plainToInstance } from 'class-transformer';
-import { ClassConstructor } from 'class-transformer/types/interfaces';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
 export const validate = <T extends object, V>(cls: ClassConstructor<T>, plain: V) => {
