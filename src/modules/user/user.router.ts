@@ -1,9 +1,9 @@
 import express from 'express';
 import logger from '../../logger/pino.logger';
 import { validate } from '../../validate';
-import { LoginUserDto } from './dto/LoginUserDto';
+import { LoginUserDto } from './dto/login-user-dto';
 // import { LoginUserDto } from './dto/LoginUserDto';
-import { RegisterUserDto } from './dto/RegisterUserDto';
+import { RegisterUserDto } from './dto/register-user-dto';
 
 const userRouter = express.Router();
 userRouter.get('/:id', (req, res) => {

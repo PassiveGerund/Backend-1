@@ -1,8 +1,7 @@
 import express from 'express';
 import logger from '../../logger/pino.logger';
 import { validate } from '../../validate';
-import { CreateTaskDto } from './dto/CreateTastDto';
-import { TaskIdDto } from './dto/TaskIdDto';
+import { CreateTaskDto, TaskIdDto } from './dto';
 
 const taskRouter = express.Router();
 
