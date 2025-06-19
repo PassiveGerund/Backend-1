@@ -1,7 +1,8 @@
 import express from 'express';
 import logger from '../../logger/pino.logger';
 import { validate } from '../../validate';
-import { CreateTaskDto, TaskIdDto } from './dto/CreateTastDto';
+import { CreateTaskDto } from './dto/CreateTastDto';
+import { TaskIdDto } from './dto/TaskIdDto';
 
 const taskRouter = express.Router();
 
@@ -35,6 +36,7 @@ taskRouter.get('/my/assigned', (req, res) => {
 
 taskRouter.put('/:id', (req, res) => {
   const id: number = Number(req.params.id);
+  validate(TaskIdDto, req.params);
   logger.info(`Пришел запрос с методом PUT. Обновить задачу ${id}`);
   res.send(`Пришел запрос с методом PUT. Обновить задачу ${id}`);
 });
