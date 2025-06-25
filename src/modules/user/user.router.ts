@@ -1,8 +1,8 @@
 import express from 'express';
+import { badRequestException } from '../../exceptions/bad-request-exception';
 import logger from '../../logger/pino.logger';
 import { validate } from '../../validate';
 import { LoginUserDto } from './dto/login-user-dto';
-// import { LoginUserDto } from './dto/LoginUserDto';
 import { RegisterUserDto } from './dto/register-user-dto';
 
 const userRouter = express.Router();
@@ -30,14 +30,14 @@ userRouter.post('', (req, res) => {});
 userRouter.post('/register', (req, res) => {
   const params = req.body;
   const dto = validate(RegisterUserDto, req.body);
-
+  logger.info(req.body);
   logger.info(`Запрос на регистрацию `);
   res.send(`Запрос на регистрацию `);
 });
 
 userRouter.post('/login', (req, res) => {
   const params = req.body;
-  validate(LoginUserDto, req.body);
+  badRequestException(LoginUserDto, req.body);
   logger.info(`Авторизация`);
   logger.info(params);
   res.send(`Авторизация`);
