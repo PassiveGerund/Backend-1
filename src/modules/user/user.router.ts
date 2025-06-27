@@ -1,9 +1,8 @@
 import express from 'express';
-import { badRequestException } from '../../exceptions/bad-request-exception';
 import logger from '../../logger/pino.logger';
 import { validate } from '../../validate';
-import { LoginUserDto } from './dto/login-user-dto';
-import { RegisterUserDto } from './dto/register-user-dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 
 const userRouter = express.Router();
 userRouter.get('/:id', (req, res) => {
@@ -37,7 +36,7 @@ userRouter.post('/register', (req, res) => {
 
 userRouter.post('/login', (req, res) => {
   const params = req.body;
-  badRequestException(LoginUserDto, req.body);
+  validate(LoginUserDto, req.body);
   logger.info(`Авторизация`);
   logger.info(params);
   res.send(`Авторизация`);

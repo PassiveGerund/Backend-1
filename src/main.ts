@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import { logRoutes } from './bootstrap/log-routers';
 import { appConfig } from './config';
-import { NotFoundException } from './exceptions/not-found-exception';
+import { NotFoundException } from './exceptions/not-found.exception';
 import logger from './logger/pino.logger';
 import { errorHandler } from './middlewares/error-handler';
 import taskRouter from './modules/task/task.router';
@@ -17,6 +17,11 @@ server.use(express.json()); // Включаем парсер тела
 
 server.use('/user', userRouter);
 server.use('/task', taskRouter);
+
+server.post('*', (req, res) => {
+  throw new NotFoundException();
+});
+
 server.use(errorHandler);
 
 const port = appConfig.port;
@@ -26,10 +31,6 @@ logRoutes(server);
 server.get('', (req, res) => {
   console.log('Начало обработки запроса!');
   res.send('Hello World!');
-});
-
-server.post('*', (req, res) => {
-  throw new NotFoundException();
 });
 
 server.listen(port, () => {
