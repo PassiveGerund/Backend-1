@@ -4,12 +4,12 @@ import dotenv from 'dotenv';
 import express from 'express';
 import { logRoutes } from './bootstrap/log-routers';
 import { appConfig } from './config';
-import { NotFoundException } from './exceptions/not-found.exception';
+import { NotFoundException } from './exceptions';
 import logger from './logger/pino.logger';
 import { errorHandler } from './middlewares/error-handler';
 import taskRouter from './modules/task/task.router';
 import userRouter from './modules/user/user.router';
-//comment
+
 dotenv.config();
 
 const server = express();
