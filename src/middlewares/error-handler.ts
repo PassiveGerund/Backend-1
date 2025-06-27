@@ -10,8 +10,16 @@ export const errorHandler = (
 ) => {
   logger.error(err);
 
+  if (err.code) {
+    res.status(err.code).json({
+      status: err.code,
+      message: err.message,
+    });
+    return;
+  }
+
   res.status(500).json({
-    status: 'error',
-    message: err.message ?? 'Неизвестная ошибка',
+    status: err.code,
+    message: 'Internal Server Error',
   });
 };

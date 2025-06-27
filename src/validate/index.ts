@@ -1,5 +1,6 @@
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
+import { BadRequestException } from '../exceptions';
 
 export const validate = <T extends object, V>(cls: ClassConstructor<T>, plain: V) => {
   const dto = plainToInstance(cls, plain);
@@ -8,10 +9,10 @@ export const validate = <T extends object, V>(cls: ClassConstructor<T>, plain: V
     const [{ constraints }] = errors;
 
     if (constraints) {
-      throw new Error(constraints[Object.keys(constraints)[0]]);
+      throw new BadRequestException(constraints[Object.keys(constraints)[0]]);
     }
 
-    throw new Error('Неизвестная ошибка');
+    throw new BadRequestException('Неизвестная ошибка');
   }
 
   return dto;
