@@ -19,8 +19,8 @@ taskRouter.post('', (req, res) => {
   const params = req.body;
   validate(CreateTaskDto, req.body);
   logger.info(params);
-  logger.info('Пришел запрос с методом POST. Создать задачу');
-  res.send('Пришел запрос с методом POST. Создать задачу');
+  logger.info('Пришел запрос с методом POST. Создать задачу. Старый');
+  res.send('Пришел запрос с методом POST. Создать задачу. Старый');
 });
 
 taskRouter.get('/my/authored', (req, res) => {
