@@ -1,38 +1,43 @@
 import 'reflect-metadata';
 import 'express-async-errors';
-import dotenv from 'dotenv';
 import express from 'express';
+import { Container } from 'inversify';
 import { logRoutes } from './bootstrap/log-routers';
 import { appConfig } from './config';
 import { NotFoundException } from './exceptions';
 import logger from './logger/pino.logger';
 import { errorHandler } from './middlewares/error-handler';
-import taskRouter from './modules/task/task.router';
-import userRouter from './modules/user/user.router';
+import { TaskController } from './modules/task/task.controller';
+import TaskModule from './modules/task/task.module';
+import { UserController } from './modules/user/user.controller';
+import UserModule from './modules/user/user.module';
 
-dotenv.config();
+const bootstrap = () => {
+  const appContainer = new Container();
+  appContainer.loadSync(TaskModule, UserModule);
 
-const server = express();
-server.use(express.json()); // Включаем парсер тела
+  const server = express(); // создаем сервер
+  server.use(express.json()); // Включаем парсер тела
 
-server.use('/user', userRouter);
-server.use('/task', taskRouter);
+  const taskController = appContainer.get(TaskController);
+  const userController = appContainer.get(UserController);
 
-server.post('*', (req, res) => {
-  throw new NotFoundException();
-});
+  server.use('/task', taskController.router);
+  server.use('/user', userController.router);
 
-server.use(errorHandler);
+  server.post('*', (req, res) => {
+    throw new NotFoundException();
+  });
 
-const port = appConfig.port;
+  server.use(errorHandler);
 
-logRoutes(server);
+  const port = appConfig.port;
 
-server.get('', (req, res) => {
-  console.log('Начало обработки запроса!');
-  res.send('Hello World!');
-});
+  logRoutes(server);
 
-server.listen(port, () => {
-  logger.info(`Это победа 🎉🎉🎉 ${port}...`);
-});
+  server.listen(port, () => {
+    logger.info(`Это победа 🎉🎉🎉 ${port}...`);
+  });
+};
+
+bootstrap();
