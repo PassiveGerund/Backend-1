@@ -4,6 +4,7 @@ import express from 'express';
 import { Container } from 'inversify';
 import { logRoutes } from './bootstrap/log-routers';
 import { appConfig } from './config';
+import { connectToPostgres } from './database';
 import { NotFoundException } from './exceptions';
 import logger from './logger/pino.logger';
 import { errorHandler } from './middlewares/error-handler';
@@ -12,7 +13,8 @@ import TaskModule from './modules/task/task.module';
 import { UserController } from './modules/user/user.controller';
 import UserModule from './modules/user/user.module';
 
-const bootstrap = () => {
+const bootstrap = async () => {
+  await connectToPostgres();
   const appContainer = new Container();
   appContainer.loadSync(TaskModule, UserModule);
 
