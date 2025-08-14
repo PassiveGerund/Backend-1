@@ -15,9 +15,9 @@ export class UserController {
     this.router.delete('', (req, res) => this.deleteUser(req, res));
   }
 
-  register(req: Request, res: Response) {
+  async register(req: Request, res: Response) {
     const dto = validate(RegisterUserDto, req.body);
-    const result = this.userService.register(dto);
+    const result = await this.userService.register(dto);
     res.json(result);
   }
   getUserId(req: Request, res: Response) {

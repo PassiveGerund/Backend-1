@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize-typescript';
 import { appConfig } from '../config';
 import logger from '../logger/pino.logger';
+import { UserEntity } from './entities';
 
 export const connectToPostgres = async () => {
   const connection = new Sequelize({
@@ -10,12 +11,10 @@ export const connectToPostgres = async () => {
     username: appConfig.postgres.username,
     password: appConfig.postgres.password,
     database: appConfig.postgres.database,
-    // host: 'localhost',
-    // port: 5432,
-    // username: 'postgres',
-    // password: 'postgrespassword',
-    // database: 'backend',
   });
+
+  connection.addModels([UserEntity]);
+
   try {
     await connection.authenticate();
   } catch (error) {
@@ -23,5 +22,7 @@ export const connectToPostgres = async () => {
     logger.error(error);
     throw error;
   }
+  // force: true для пересоздания БД, если вносили изменения в структуру таблицы
+  await connection.sync({ alter: true });
   logger.info('Successfully connected to PostgresSQL');
 };
