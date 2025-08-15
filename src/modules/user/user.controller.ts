@@ -26,9 +26,9 @@ export class UserController {
     res.json(result);
   }
 
-  postUserLogin(req: Request, res: Response) {
+  async postUserLogin(req: Request, res: Response) {
     const dto = validate(LoginUserDto, req.body);
-    const result = this.userService.postUserLogin(dto);
+    const result = await this.userService.postUserLogin(dto);
     res.json(result);
   }
 
