@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { UserEntity } from '../../database/entities';
-import { BadRequestException } from '../../exceptions';
+import { BadRequestException, NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
 
@@ -35,7 +35,7 @@ export class UserService {
       where: { email: dto.email },
     });
     if (!exist) {
-      return 'Пользователь не найден';
+      throw new NotFoundException(`Пользователь с email ${dto.email} не найден.`);
     }
 
     return exist;
