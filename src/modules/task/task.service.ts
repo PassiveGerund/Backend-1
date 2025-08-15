@@ -1,12 +1,19 @@
 import { injectable } from 'inversify';
+import { TaskEntity } from '../../database/entities';
 import logger from '../../logger/pino.logger';
 import { CreateTaskDto, TaskIdDto } from './dto';
 
 @injectable()
 export class TaskService {
-  create(dto: CreateTaskDto) {
+  async create(dto: CreateTaskDto) {
     logger.info('Создание новой задачи');
-    return { id: 1, ...dto };
+    // /
+    const task = await TaskEntity.create({
+      title: dto.title,
+      description: dto.description,
+    });
+    return task;
+    // /
   }
 
   getTasks() {
@@ -15,7 +22,7 @@ export class TaskService {
   }
 
   getTaskId(dto: TaskIdDto) {
-    logger.info(`Создание новой задачи  по id ${dto.id}`);
+    logger.info(`Получение новой задачи  по id ${dto.id}`);
     return { ...dto };
   }
 
