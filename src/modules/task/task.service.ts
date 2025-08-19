@@ -52,17 +52,17 @@ export class TaskService {
   }
 
   // Обновить задачу
-  async putTasksId(id: TaskIdDto, data: UpdateTaskDto) {
-    logger.info(`Обновление ${id} задачи`);
+  async putTasksId(idobject: TaskIdDto, data: UpdateTaskDto) {
+    logger.info(`Обновление ${idobject.id} задачи`);
     const task = await TaskEntity.update(
-      {},
+      { title: data.title, description: data.description },
       {
-        where: { id: id },
+        where: { id: idobject.id },
       },
     );
 
     if (!task) {
-      throw new NotFoundException(`Задачи с ID = ${id} не найдено, не могу обновить`);
+      throw new NotFoundException(`Задачи с ID = ${idobject.id} не найдено, не могу обновить`);
     }
 
     return data;
