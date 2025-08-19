@@ -24,4 +24,11 @@ export class UserEntity extends Model {
     unique: true,
   })
   public email: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  public password: string;
 }

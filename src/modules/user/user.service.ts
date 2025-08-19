@@ -13,7 +13,7 @@ export class UserService {
       where: { email: data.email },
     });
     if (exist) {
-      throw new BadRequestException('Email already exists');
+      throw new BadRequestException(`Пользователь с email ${data.email} уже зарегистрирован`);
     }
     const user = await UserEntity.create({
       name: data.name,
