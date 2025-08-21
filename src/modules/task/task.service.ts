@@ -18,13 +18,13 @@ export class TaskService {
   }
 
   // Получить задачу по ID
-  async getTaskId(data: TaskIdDto) {
-    logger.info(`Получение новой задачи  по id ${data.id}`);
+  async getTaskId(idobject: TaskIdDto) {
+    logger.info(`Получение новой задачи  по id ${idobject.id}`);
     const task = await TaskEntity.findOne({
-      where: { id: data.id },
+      where: { id: idobject.id },
     });
     if (!task) {
-      throw new NotFoundException(`Задачи с ID = ${data.id} не найдено`);
+      throw new NotFoundException(`Задачи с ID = ${idobject.id} не найдено`);
     }
     return task;
   }

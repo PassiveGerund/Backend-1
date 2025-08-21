@@ -28,7 +28,6 @@ export class UserEntity extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true,
   })
   public password: string;
 }

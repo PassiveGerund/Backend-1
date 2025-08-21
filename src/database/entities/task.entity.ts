@@ -21,7 +21,6 @@ export class TaskEntity extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: true,
-    unique: false,
   })
   public description: string;
 }
