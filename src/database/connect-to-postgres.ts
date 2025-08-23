@@ -1,11 +1,12 @@
 import { Sequelize } from 'sequelize-typescript';
 import { appConfig } from '../config';
 import logger from '../logger/pino.logger';
-import { UserEntity } from './entities';
+import { TaskEntity, UserEntity } from './entities';
 
 export const connectToPostgres = async () => {
   const connection = new Sequelize({
     dialect: 'postgres',
+    logging: false,
     host: appConfig.postgres.host,
     port: appConfig.postgres.port,
     username: appConfig.postgres.username,
@@ -13,7 +14,7 @@ export const connectToPostgres = async () => {
     database: appConfig.postgres.database,
   });
 
-  connection.addModels([UserEntity]);
+  connection.addModels([UserEntity, TaskEntity]);
 
   try {
     await connection.authenticate();

@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
 import { validate } from '../../validate';
-import { CreateTaskDto, TaskIdDto } from './dto';
+import { CreateTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
 import { TaskService } from './task.service';
 
 @injectable()
@@ -11,27 +11,27 @@ export class TaskController {
   constructor(@inject(TaskService) private readonly service: TaskService) {
     this.router.post('/', (req, res) => this.create(req, res));
     this.router.get('', (req, res) => this.getTasks(req, res));
-    this.router.get('/:id', (req, res) => this.getTasksId(req, res));
+    this.router.get('/:id', (req, res) => this.getTaskById(req, res));
     this.router.get('/my/authored', (req, res) => this.getMyAuthored(req, res));
     this.router.get('/my/assigned', (req, res) => this.getMyAssigned(req, res));
-    this.router.put('/:id', (req, res) => this.putTasksId(req, res));
-    this.router.delete('/:id', (req, res) => this.deleteTasksId(req, res));
+    this.router.put('/:id', (req, res) => this.updateTaskById(req, res));
+    this.router.delete('/:id', (req, res) => this.deleteTaskById(req, res));
   }
 
-  create(req: Request, res: Response) {
+  async create(req: Request, res: Response) {
     const dto = validate(CreateTaskDto, req.body);
-    const result = this.service.create(dto);
+    const result = await this.service.create(dto);
     res.json(result);
   }
 
-  getTasks(req: Request, res: Response) {
-    const result = this.service.getTasks();
+  async getTasks(req: Request, res: Response) {
+    const result = await this.service.getTasks();
     res.json(result);
   }
 
-  getTasksId(req: Request, res: Response) {
-    const dto = validate(TaskIdDto, req.params);
-    const result = this.service.getTaskId(dto);
+  async getTaskById(req: Request, res: Response) {
+    const id = validate(TaskIdDto, req.params);
+    const result = await this.service.getTaskId(id);
     res.json(result);
   }
 
@@ -45,15 +45,16 @@ export class TaskController {
     res.json(result);
   }
 
-  putTasksId(req: Request, res: Response) {
-    const dto = validate(TaskIdDto, req.params);
-    const result = this.service.putTasksId(dto);
+  async updateTaskById(req: Request, res: Response) {
+    const id = validate(TaskIdDto, req.params);
+    const data = validate(UpdateTaskDto, req.body);
+    const result = await this.service.putTasksId(id, data);
     res.json(result);
   }
 
-  deleteTasksId(req: Request, res: Response) {
+  async deleteTaskById(req: Request, res: Response) {
     const dto = validate(TaskIdDto, req.params);
-    const result = this.service.deleteTasksId(dto);
+    const result = await this.service.deleteTasksId(dto);
     res.json(result);
   }
 }
