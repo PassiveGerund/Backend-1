@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import { TaskEntity } from '../../database/entities';
 import { NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
-import { CreateTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
+import { CreateTaskDto, PaginationDto, TaskIdDto, UpdateTaskDto } from './dto';
 
 @injectable()
 export class TaskService {
@@ -18,7 +18,7 @@ export class TaskService {
   }
 
   // Получить задачу по ID
-  async getTaskId(idobject: TaskIdDto) {
+  async getTaskById(idobject: TaskIdDto) {
     logger.info(`Получение новой задачи  по id ${idobject.id}`);
     const task = await TaskEntity.findOne({
       where: { id: idobject.id },
@@ -30,9 +30,10 @@ export class TaskService {
   }
 
   // Получить все задачи
-  async getTasks() {
+  async getTasks(query: PaginationDto) {
     logger.info('Список задач');
-    const tasks = await TaskEntity.findAll();
+    const tasks = await TaskEntity.findAll(query);
+
     if (!tasks) {
       throw new NotFoundException(`Задач не найдено`);
     }
@@ -42,29 +43,23 @@ export class TaskService {
   // Удалить задачу по ID
   async deleteTasksId(data: TaskIdDto) {
     logger.info(`Delete запрос на ${data.id} задачи`);
+    await this.getTaskById(data);
     const task = await TaskEntity.destroy({
       where: { id: data.id },
     });
-    if (!task) {
-      throw new NotFoundException(`Задачи с ID = ${data.id} не найдено, не могу удалить`);
-    }
     return `Задача ${data.id} удалена`;
   }
 
   // Обновить задачу
   async putTasksId(idobject: TaskIdDto, data: UpdateTaskDto) {
     logger.info(`Обновление ${idobject.id} задачи`);
+    await this.getTaskById(idobject);
     const task = await TaskEntity.update(
       { title: data.title, description: data.description },
       {
         where: { id: idobject.id },
       },
     );
-
-    if (!task) {
-      throw new NotFoundException(`Задачи с ID = ${idobject.id} не найдено, не могу обновить`);
-    }
-
     return data;
   }
 
