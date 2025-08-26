@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 
 export enum TaskSortByEnum {
   id = 'id',
@@ -12,20 +12,22 @@ export enum TaskSortDirection {
   desc = 'desc',
 }
 
-export class PaginationDto {
+export class GetTaskDto {
   @IsNumber()
   @Type(() => Number)
   @IsOptional()
-  limit: number;
+  limit: number = 10;
 
   @IsNumber()
   @Type(() => Number)
   @IsOptional()
-  offset: number;
+  offset: number = 0;
 
   @IsOptional()
+  @IsEnum(TaskSortByEnum)
   sortBy: TaskSortByEnum;
 
   @IsOptional()
+  @IsEnum(TaskSortDirection)
   sortDirection: TaskSortDirection;
 }

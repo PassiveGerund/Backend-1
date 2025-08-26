@@ -1,7 +1,8 @@
 import { Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
 import { validate } from '../../validate';
-import { CreateTaskDto, PaginationDto, TaskIdDto, UpdateTaskDto } from './dto';
+import { CreateTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
+import { GetTaskDto } from './dto/get-task.dto';
 import { TaskService } from './task.service';
 
 @injectable()
@@ -25,7 +26,7 @@ export class TaskController {
   }
 
   async getTasks(req: Request, res: Response) {
-    const query = validate(PaginationDto, req.query);
+    const query = validate(GetTaskDto, req.query);
     const result = await this.service.getTasks(query);
     res.json(result);
   }

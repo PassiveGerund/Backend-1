@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import { TaskEntity } from '../../database/entities';
 import { NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
-import { CreateTaskDto, PaginationDto, TaskIdDto, UpdateTaskDto } from './dto';
+import { CreateTaskDto, GetTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
 
 @injectable()
 export class TaskService {
@@ -30,9 +30,13 @@ export class TaskService {
   }
 
   // Получить все задачи
-  async getTasks(query: PaginationDto) {
+  async getTasks(query: GetTaskDto) {
     logger.info('Список задач');
-    const tasks = await TaskEntity.findAll(query);
+    const tasks = await TaskEntity.findAll({
+      order: [[query.sortBy, query.sortDirection]],
+      limit: query.limit,
+      offset: query.offset,
+    });
 
     if (!tasks) {
       throw new NotFoundException(`Задач не найдено`);
