@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
 import { validate } from '../../validate';
 import { CreateTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
+import { GetTaskDto } from './dto/get-task.dto';
 import { TaskService } from './task.service';
 
 @injectable()
@@ -25,13 +26,14 @@ export class TaskController {
   }
 
   async getTasks(req: Request, res: Response) {
-    const result = await this.service.getTasks();
+    const query = validate(GetTaskDto, req.query);
+    const result = await this.service.getTasks(query);
     res.json(result);
   }
 
   async getTaskById(req: Request, res: Response) {
     const id = validate(TaskIdDto, req.params);
-    const result = await this.service.getTaskId(id);
+    const result = await this.service.getTaskById(id);
     res.json(result);
   }
 
