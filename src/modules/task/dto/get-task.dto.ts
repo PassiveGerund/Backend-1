@@ -25,9 +25,9 @@ export class GetTaskDto {
 
   @IsOptional()
   @IsEnum(TaskSortByEnum)
-  sortBy: TaskSortByEnum;
+  sortBy: TaskSortByEnum = TaskSortByEnum.id;
 
   @IsOptional()
   @IsEnum(TaskSortDirection)
-  sortDirection: TaskSortDirection;
+  sortDirection: TaskSortDirection = TaskSortDirection.desc;
 }
