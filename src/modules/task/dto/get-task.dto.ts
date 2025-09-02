@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export enum TaskSortByEnum {
   id = 'id',
@@ -30,4 +30,8 @@ export class GetTaskDto {
   @IsOptional()
   @IsEnum(TaskSortDirection)
   sortDirection: TaskSortDirection = TaskSortDirection.desc;
+
+  @IsString()
+  @IsOptional()
+  search?: string;
 }
