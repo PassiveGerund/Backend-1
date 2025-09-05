@@ -38,10 +38,7 @@ export class TaskService {
 
     if (query.search) {
       where = {
-        [Op.or]: [
-          { title: { [Op.iLike]: `%${query.search}%` } },
-          { description: { [Op.iLike]: `%${query.search}%` } },
-        ],
+        [Op.or]: [{ title: { [Op.iLike]: `%${query.search}%` } }, { description: { [Op.iLike]: `%${query.search}%` } }],
       };
     }
     const tasks = await TaskEntity.findAndCountAll({
