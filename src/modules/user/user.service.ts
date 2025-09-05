@@ -1,7 +1,7 @@
 import { compare, hash } from 'bcryptjs';
 import { injectable } from 'inversify';
 import { UserEntity } from '../../database/entities';
-import { BadRequestException, NotFoundException } from '../../exceptions';
+import { BadRequestException, NotFoundException, UnauthorizedException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
 
@@ -45,7 +45,7 @@ export class UserService {
 
     const passwordAreEquals = await compare(dto.password, exist.password);
     if (!passwordAreEquals) {
-      throw new BadRequestException('Пользователь не найден!'); // unauthorized
+      throw new UnauthorizedException('Пользователь не найден!'); // unauthorized
     }
     return exist;
   }

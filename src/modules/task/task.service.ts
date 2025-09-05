@@ -40,7 +40,7 @@ export class TaskService {
       where = {
         [Op.or]: [
           { title: { [Op.iLike]: `%${query.search}%` } },
-          { description: { [Op.iLike]: `%$${query.search}%` } },
+          { description: { [Op.iLike]: `%${query.search}%` } },
         ],
       };
     }
