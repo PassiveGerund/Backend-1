@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import { Op } from 'sequelize';
 import { TaskEntity } from '../../database/entities';
 import { NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
@@ -32,8 +33,17 @@ export class TaskService {
   // Получить все задачи
   async getTasks(query: GetTaskDto) {
     logger.info('Список задач');
-    const tasks = await TaskEntity.findAll({
+
+    let where = {};
+
+    if (query.search) {
+      where = {
+        [Op.or]: [{ title: { [Op.iLike]: `%${query.search}%` } }, { description: { [Op.iLike]: `%${query.search}%` } }],
+      };
+    }
+    const tasks = await TaskEntity.findAndCountAll({
       order: [[query.sortBy, query.sortDirection]],
+      where,
       limit: query.limit,
       offset: query.offset,
     });
@@ -41,7 +51,13 @@ export class TaskService {
     if (!tasks) {
       throw new NotFoundException(`Задач не найдено`);
     }
-    return tasks;
+    return {
+      total: tasks.count,
+      search: query.search,
+      limit: query.limit,
+      offset: query.offset,
+      data: tasks.rows,
+    };
   }
 
   // Удалить задачу по ID

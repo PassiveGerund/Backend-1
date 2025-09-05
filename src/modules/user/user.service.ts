@@ -1,11 +1,13 @@
+import { compare, hash } from 'bcryptjs';
 import { injectable } from 'inversify';
 import { UserEntity } from '../../database/entities';
-import { BadRequestException, NotFoundException } from '../../exceptions';
+import { BadRequestException, NotFoundException, UnauthorizedException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
 
 @injectable()
 export class UserService {
+  // Регистрация пользователя
   async register(data: RegisterUserDto) {
     logger.info('Регистрация пользователя');
 
@@ -15,10 +17,13 @@ export class UserService {
     if (exist) {
       throw new BadRequestException(`Пользователь с email ${data.email} уже зарегистрирован`);
     }
+
+    const hashedPassword = await hash(data.password, 10);
+
     const user = await UserEntity.create({
       name: data.name,
       email: data.email,
-      password: data.password,
+      password: hashedPassword,
     });
     return user;
   }
@@ -38,6 +43,10 @@ export class UserService {
       throw new NotFoundException(`Пользователь с email ${dto.email} не найден.`);
     }
 
+    const passwordAreEquals = await compare(dto.password, exist.password);
+    if (!passwordAreEquals) {
+      throw new UnauthorizedException('Пользователь не найден!'); // unauthorized
+    }
     return exist;
   }
   deleteUser() {
