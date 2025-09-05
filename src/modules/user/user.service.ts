@@ -1,4 +1,4 @@
-import { compare, hash } from 'bcrypt';
+import { compare, hash } from 'bcryptjs';
 import { injectable } from 'inversify';
 import { UserEntity } from '../../database/entities';
 import { BadRequestException, NotFoundException } from '../../exceptions';
