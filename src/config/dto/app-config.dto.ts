@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { plainToInstance, Transform, Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
 import { PostgresConfigDto } from './postgres-config.dto';
 
 export class AppConfigDto {
@@ -12,4 +12,7 @@ export class AppConfigDto {
   @ValidateNested()
   @Transform(({ value }) => plainToInstance(PostgresConfigDto, value))
   postgres: PostgresConfigDto;
+
+  @IsString()
+  redisUrl: string;
 }
