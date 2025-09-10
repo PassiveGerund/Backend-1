@@ -37,6 +37,9 @@ export class TaskService {
     if (!task) {
       throw new NotFoundException(`Задачи с ID = ${idobject.id} не найдено`);
     }
+
+    await this.cacheService.redis.set(`task-${idobject.id}`, JSON.stringify(task), { EX: 300 });
+
     return task;
   }
 
@@ -73,10 +76,13 @@ export class TaskService {
   // Удалить задачу по ID
   async deleteTasksId(data: TaskIdDto) {
     logger.info(`Delete запрос на ${data.id} задачи`);
+    await this.cacheService.redis.del(`task-${data.id}`);
+
     await this.getTaskById(data);
     const task = await TaskEntity.destroy({
       where: { id: data.id },
     });
+
     return `Задача ${data.id} удалена`;
   }
 

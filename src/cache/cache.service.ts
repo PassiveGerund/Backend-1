@@ -13,11 +13,15 @@ export class CacheService {
 
   async connect() {
     try {
-      await this.connect();
+      await this.redis.connect();
       logger.info('Connected to Redis');
     } catch (error) {
       logger.error(error);
       throw error;
     }
   }
+
+  // async delete(key: string) {
+  //   this.redis.delete(key);
+  // }
 }
