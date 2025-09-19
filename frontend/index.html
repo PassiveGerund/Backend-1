@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Система управления задачами</title>
+</head>
+<body>
+
+<h1>Создание задачи</h1>
+<label for="title">Название:</label>
+<input type="text" id="title" name="title"><br>
+<label for="description">Описание:</label>
+<input type="text" id="description" name="description"><br>
+<button onclick="createTask()">Создать задачу</button>
+
+<h1>Список задач</h1>
+<select id="sortBy">
+  <option value="createdAt">По дате создания</option>
+  <option value="title">По названию</option>
+</select>
+<select id="sortDirection">
+  <option value="desc">По убыванию</option>
+  <option value="asc">По возрастанию</option>
+</select>
+<p id="pagination-info"></p>
+<button onclick="getTaskList()">Загрузить список задач</button>
+<ul id="task-list"></ul>
+
+</body>
+
+<script>
+  async function getTaskList() {
+    const sortBy = document.getElementById("sortBy").value;
+    const sortDirection = document.getElementById("sortDirection").value;
+    console.log(sortBy, sortDirection);
+
+    const response = await fetch(`http://localhost:2000/task?sortBy=${sortBy}&sortDirection=${sortDirection}`);
+    const responseBody = await response.json()
+
+    if (!response.ok) {
+      alert(responseBody.message || 'Ошибка сервера')
+      return
+    }
+
+    document.getElementById('pagination-info').textContent =
+      `Показаны задачи с ${responseBody.offset + 1} по ${responseBody.offset + responseBody.limit} (Всего в базе ${responseBody.total})`;
+
+
+    const list = document.getElementById('task-list');
+    list.innerHTML=''
+
+    responseBody.data.map(task => {
+      const li = document.createElement('li');
+      li.textContent = `${task.title} (${task.createdAt})`
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = `X`;
+      deleteBtn.addEventListener('click', () => deleteTask(task.id))
+
+      list.appendChild(li).appendChild(deleteBtn);
+    })
+  }
+
+  async function deleteTask(id) {
+    const response = await fetch(`http://localhost:2000/task/${id}`, { method: 'DELETE' });
+
+    if (response.ok) {
+      alert(`Задача ${id} успешно удалена`)
+    } else {
+      alert('Произошла ошибка')
+    }
+
+    getTaskList()
+  }
+
+  async function createTask() {
+    const requestBody = {
+      title: document.getElementById('title').value,
+      description: document.getElementById('description').value,
+    }
+
+    const response = await fetch('http://localhost:2000/task', { method: 'POST', body: JSON.stringify(requestBody), headers: { 'Content-Type': 'application/json' } });
+    const data = await response.json()
+
+    if (response.ok) {
+      alert('Задача успешно создана')
+    } else {
+      alert(data.message || 'Ошибка')
+    }
+
+    getTaskList()
+  }
+</script>
+</html>
+

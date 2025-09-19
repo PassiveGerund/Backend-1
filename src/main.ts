@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import 'express-async-errors';
+import cors from 'cors';
 import express from 'express';
 import { Container } from 'inversify';
 import { logRoutes } from './bootstrap/log-routers';
@@ -21,6 +22,7 @@ const bootstrap = async () => {
 
   const server = express(); // создаем сервер
   server.use(express.json()); // Включаем парсер тела
+  server.use(cors({ origin: '*' }));
 
   const taskController = appContainer.get(TaskController);
   const userController = appContainer.get(UserController);

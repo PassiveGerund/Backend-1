@@ -5,6 +5,7 @@ export enum TaskSortByEnum {
   id = 'id',
   title = 'title',
   description = 'description',
+  createdAt = 'createdAt',
 }
 
 export enum TaskSortDirection {
