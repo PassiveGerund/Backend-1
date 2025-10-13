@@ -76,13 +76,12 @@ export class TaskService {
   // Удалить задачу по ID
   async deleteTasksId(data: TaskIdDto) {
     logger.info(`Delete запрос на ${data.id} задачи`);
-    await this.cacheService.redis.del(`task-${data.id}`);
 
     await this.getTaskById(data);
     const task = await TaskEntity.destroy({
       where: { id: data.id },
     });
-
+    await this.cacheService.redis.del(`task-${data.id}`);
     return `Задача ${data.id} удалена`;
   }
 
@@ -96,6 +95,7 @@ export class TaskService {
         where: { id: idobject.id },
       },
     );
+    await this.cacheService.redis.del(`task-${idobject.id}`);
     return data;
   }
 
