@@ -5,4 +5,7 @@ export class CreateDepartmentDto {
   @IsNotEmpty()
   @IsString()
   title: string;
+
+  @IsString()
+  description: string;
 }

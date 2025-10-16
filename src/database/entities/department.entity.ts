@@ -22,5 +22,5 @@ export class DepartmentEntity extends Model {
     type: DataType.STRING,
     allowNull: true,
   })
-  public description: string;
+  public description: string | null;
 }

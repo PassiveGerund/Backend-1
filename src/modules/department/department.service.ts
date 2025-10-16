@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { CacheService } from '../../cache/cache.service';
 import { DepartmentEntity } from '../../database/entities/department.entity';
+import { NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { CreateDepartmentDto, DepartmentIdDto } from './dto';
 
@@ -14,6 +15,7 @@ export class DepartmentService {
 
     const department = await DepartmentEntity.create({
       title: dto.title,
+      description: dto.description,
     });
     return department;
   }
@@ -26,6 +28,16 @@ export class DepartmentService {
     if (cached) {
       return JSON.parse(cached);
     }
+    const department = await DepartmentEntity.findOne({
+      where: { id: idobject.id },
+    });
+    if (!department) {
+      throw new NotFoundException(`Департамента с ID = ${idobject.id} не найдено`);
+    }
+
+    await this.cacheService.redis.set(`department-${idobject.id}`, JSON.stringify(department), { EX: 300 });
+
+    return department;
   }
 
   // Удалить департамент по ID
