@@ -1,5 +1,6 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { Op } from 'sequelize';
+import { CacheService } from '../../cache/cache.service';
 import { TaskEntity } from '../../database/entities';
 import { NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
@@ -7,6 +8,8 @@ import { CreateTaskDto, GetTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
 
 @injectable()
 export class TaskService {
+  constructor(@inject(CacheService) private readonly cacheService: CacheService) {}
+
   // Создание задачи
   async create(dto: CreateTaskDto) {
     logger.info('Создание новой задачи');
@@ -21,12 +24,22 @@ export class TaskService {
   // Получить задачу по ID
   async getTaskById(idobject: TaskIdDto) {
     logger.info(`Получение новой задачи  по id ${idobject.id}`);
+
+    const cached = await this.cacheService.redis.get(`task-${idobject.id}`);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    // из базы
     const task = await TaskEntity.findOne({
       where: { id: idobject.id },
     });
     if (!task) {
       throw new NotFoundException(`Задачи с ID = ${idobject.id} не найдено`);
     }
+
+    await this.cacheService.redis.set(`task-${idobject.id}`, JSON.stringify(task), { EX: 300 });
+
     return task;
   }
 
@@ -63,10 +76,12 @@ export class TaskService {
   // Удалить задачу по ID
   async deleteTasksId(data: TaskIdDto) {
     logger.info(`Delete запрос на ${data.id} задачи`);
+
     await this.getTaskById(data);
     const task = await TaskEntity.destroy({
       where: { id: data.id },
     });
+    await this.cacheService.redis.del(`task-${data.id}`);
     return `Задача ${data.id} удалена`;
   }
 
@@ -80,6 +95,7 @@ export class TaskService {
         where: { id: idobject.id },
       },
     );
+    await this.cacheService.redis.del(`task-${idobject.id}`);
     return data;
   }
 
