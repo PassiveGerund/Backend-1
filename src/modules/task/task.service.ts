@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Op } from 'sequelize';
 import { CacheService } from '../../cache/cache.service';
-import { TaskEntity } from '../../database/entities';
+import { TaskEntity, UserEntity } from '../../database/entities';
 import { NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { CreateTaskDto, GetTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
@@ -33,6 +33,7 @@ export class TaskService {
     // из базы
     const task = await TaskEntity.findOne({
       where: { id: idobject.id },
+      include: [{ model: UserEntity, attributes: ['id', 'name', 'email'] }], // выводит информацию о пользователе-исполнителе задачи
     });
     if (!task) {
       throw new NotFoundException(`Задачи с ID = ${idobject.id} не найдено`);
@@ -57,6 +58,7 @@ export class TaskService {
     const tasks = await TaskEntity.findAndCountAll({
       order: [[query.sortBy, query.sortDirection]],
       where,
+      include: [{ model: UserEntity, attributes: ['id', 'name', 'email'] }], // выводит информацию о пользователе-исполнителе задачи
       limit: query.limit,
       offset: query.offset,
     });

@@ -1,4 +1,5 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { DepartmentEntity } from './department.entity';
 
 @Table({
   tableName: 'users',
@@ -30,4 +31,16 @@ export class UserEntity extends Model {
     allowNull: false,
   })
   public password: string;
+
+  @ForeignKey(() => DepartmentEntity)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  public departmentId: number | null;
+
+  @BelongsTo(() => DepartmentEntity, {
+    foreignKey: 'departmentId',
+  })
+  public deparment: DepartmentEntity;
 }

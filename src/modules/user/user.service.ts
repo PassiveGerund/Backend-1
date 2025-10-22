@@ -1,6 +1,6 @@
 import { compare, hash } from 'bcryptjs';
 import { injectable } from 'inversify';
-import { UserEntity } from '../../database/entities';
+import { DepartmentEntity, UserEntity } from '../../database/entities';
 import { BadRequestException, NotFoundException, UnauthorizedException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
@@ -24,6 +24,7 @@ export class UserService {
       name: data.name,
       email: data.email,
       password: hashedPassword,
+      department: data.department,
     });
     return user;
   }
@@ -38,6 +39,7 @@ export class UserService {
 
     const exist = await UserEntity.findOne({
       where: { email: dto.email },
+      include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
     });
     if (!exist) {
       throw new NotFoundException(`Пользователь с email ${dto.email} не найден.`);
