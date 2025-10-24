@@ -11,11 +11,20 @@ export class UserService {
   async register(data: RegisterUserDto) {
     logger.info('Регистрация пользователя');
 
+    // есть ли такой пользователь по email
     const exist = await UserEntity.findOne({
       where: { email: data.email },
     });
     if (exist) {
       throw new BadRequestException(`Пользователь с email ${data.email} уже зарегистрирован`);
+    }
+
+    // есть ли такой департамент в базе
+    const existdep = await DepartmentEntity.findOne({
+      where: { id: data.department },
+    });
+    if (!existdep) {
+      throw new BadRequestException(`Департамента ${data.department} не существует`);
     }
 
     const hashedPassword = await hash(data.password, 10);
@@ -24,7 +33,7 @@ export class UserService {
       name: data.name,
       email: data.email,
       password: hashedPassword,
-      department: data.department,
+      departmentId: data.department,
     });
     return user;
   }

@@ -14,10 +14,21 @@ export class TaskService {
   async create(dto: CreateTaskDto) {
     logger.info('Создание новой задачи');
 
+    // проверка есть ли пользователь assignUser в базе
+    const userexist = await UserEntity.findOne({
+      where: { id: dto.assignUser },
+    });
+
+    if (!userexist) {
+      throw new NotFoundException(`Пользователя с ID = ${dto.assignUser} не найдено`);
+    }
+
     const task = await TaskEntity.create({
       title: dto.title,
       description: dto.description,
+      assignId: dto.assignUser,
     });
+
     return task;
   }
 

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsNotEmpty()
@@ -9,4 +9,7 @@ export class CreateTaskDto {
   @IsString()
   @IsNotEmpty()
   description: string;
+
+  @IsNumber()
+  assignUser: number | null;
 }
