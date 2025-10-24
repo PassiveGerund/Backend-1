@@ -13,5 +13,5 @@ export class RegisterUserDto {
   password: string;
 
   @IsNumber()
-  department: number;
+  departmentId: number;
 }

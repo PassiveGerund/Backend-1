@@ -21,10 +21,10 @@ export class UserService {
 
     // есть ли такой департамент в базе
     const existdep = await DepartmentEntity.findOne({
-      where: { id: data.department },
+      where: { id: data.departmentId },
     });
     if (!existdep) {
-      throw new BadRequestException(`Департамента ${data.department} не существует`);
+      throw new BadRequestException(`Департамента ${data.departmentId} не существует`);
     }
 
     const hashedPassword = await hash(data.password, 10);
@@ -33,7 +33,7 @@ export class UserService {
       name: data.name,
       email: data.email,
       password: hashedPassword,
-      departmentId: data.department,
+      departmentId: data.departmentId,
     });
     return user;
   }

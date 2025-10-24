@@ -11,5 +11,5 @@ export class CreateTaskDto {
   description: string;
 
   @IsNumber()
-  assignUser: number | null;
+  assignUserId: number | null;
 }

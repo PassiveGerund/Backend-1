@@ -42,5 +42,5 @@ export class UserEntity extends Model {
   @BelongsTo(() => DepartmentEntity, {
     foreignKey: 'departmentId',
   })
-  public deparment: DepartmentEntity;
+  public department: DepartmentEntity;
 }
