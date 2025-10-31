@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Op } from 'sequelize';
 import { CacheService } from '../../cache/cache.service';
-import { TaskEntity } from '../../database/entities';
+import { DepartmentEntity, TaskEntity, UserEntity } from '../../database/entities';
 import { NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { CreateTaskDto, GetTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
@@ -14,10 +14,21 @@ export class TaskService {
   async create(dto: CreateTaskDto) {
     logger.info('Создание новой задачи');
 
+    // проверка есть ли пользователь assignUser в базе
+    const userexist = await UserEntity.findOne({
+      where: { id: dto.assignUserId },
+    });
+
+    if (!userexist) {
+      throw new NotFoundException(`Пользователя с ID = ${dto.assignUserId} не найдено`);
+    }
+
     const task = await TaskEntity.create({
       title: dto.title,
       description: dto.description,
+      assignId: dto.assignUserId,
     });
+
     return task;
   }
 
@@ -33,6 +44,13 @@ export class TaskService {
     // из базы
     const task = await TaskEntity.findOne({
       where: { id: idobject.id },
+      include: [
+        {
+          model: UserEntity,
+          attributes: ['id', 'name', 'email'],
+          include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
+        },
+      ], // выводит информацию о пользователе-исполнителе задачи
     });
     if (!task) {
       throw new NotFoundException(`Задачи с ID = ${idobject.id} не найдено`);
@@ -57,6 +75,7 @@ export class TaskService {
     const tasks = await TaskEntity.findAndCountAll({
       order: [[query.sortBy, query.sortDirection]],
       where,
+      include: [{ model: UserEntity, attributes: ['id', 'name', 'email'] }], // выводит информацию о пользователе-исполнителе задачи
       limit: query.limit,
       offset: query.offset,
     });

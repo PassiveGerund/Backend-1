@@ -1,6 +1,6 @@
 import { compare, hash } from 'bcryptjs';
 import { injectable } from 'inversify';
-import { UserEntity } from '../../database/entities';
+import { DepartmentEntity, UserEntity } from '../../database/entities';
 import { BadRequestException, NotFoundException, UnauthorizedException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
@@ -11,11 +11,20 @@ export class UserService {
   async register(data: RegisterUserDto) {
     logger.info('Регистрация пользователя');
 
+    // есть ли такой пользователь по email
     const exist = await UserEntity.findOne({
       where: { email: data.email },
     });
     if (exist) {
       throw new BadRequestException(`Пользователь с email ${data.email} уже зарегистрирован`);
+    }
+
+    // есть ли такой департамент в базе
+    const existdep = await DepartmentEntity.findOne({
+      where: { id: data.departmentId },
+    });
+    if (!existdep) {
+      throw new BadRequestException(`Департамента ${data.departmentId} не существует`);
     }
 
     const hashedPassword = await hash(data.password, 10);
@@ -24,6 +33,7 @@ export class UserService {
       name: data.name,
       email: data.email,
       password: hashedPassword,
+      departmentId: data.departmentId,
     });
     return user;
   }
@@ -38,6 +48,7 @@ export class UserService {
 
     const exist = await UserEntity.findOne({
       where: { email: dto.email },
+      include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
     });
     if (!exist) {
       throw new NotFoundException(`Пользователь с email ${dto.email} не найден.`);

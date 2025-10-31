@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNumber, IsString, MinLength } from 'class-validator';
 
 export class RegisterUserDto {
   @IsEmail()
@@ -11,4 +11,7 @@ export class RegisterUserDto {
   @IsString()
   @MinLength(5)
   password: string;
+
+  @IsNumber()
+  departmentId: number;
 }
