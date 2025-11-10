@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
+import { AuthGuard } from '../../guard';
 import { validate } from '../../validate';
 import { CreateTaskDto, TaskIdDto, UpdateTaskDto } from './dto';
 import { GetTaskDto } from './dto/get-task.dto';
@@ -10,7 +11,7 @@ export class TaskController {
   public readonly router = Router();
 
   constructor(@inject(TaskService) private readonly service: TaskService) {
-    this.router.post('/', (req, res) => this.create(req, res));
+    this.router.post('/', AuthGuard, (req, res) => this.create(req, res));
     this.router.get('', (req, res) => this.getTasks(req, res));
     this.router.get('/:id', (req, res) => this.getTaskById(req, res));
     this.router.get('/my/authored', (req, res) => this.getMyAuthored(req, res));
@@ -21,7 +22,7 @@ export class TaskController {
 
   async create(req: Request, res: Response) {
     const dto = validate(CreateTaskDto, req.body);
-    const result = await this.service.create(dto);
+    const result = await this.service.create(dto, res.locals.user.id);
     res.json(result);
   }
 

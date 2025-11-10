@@ -23,7 +23,8 @@ export const connectToPostgres = async () => {
     logger.error(error);
     throw error;
   }
-  // force: true для пересоздания БД, если вносили изменения в структуру таблицы
+  // force: true для пересоздания БД, если вносили изменения в структуру таблицы:
+  // await connection.sync({ alter: true, force: true });
   await connection.sync({ alter: true });
   logger.info('Successfully connected to PostgresSQL');
 };

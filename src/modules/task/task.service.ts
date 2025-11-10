@@ -11,7 +11,7 @@ export class TaskService {
   constructor(@inject(CacheService) private readonly cacheService: CacheService) {}
 
   // Создание задачи
-  async create(dto: CreateTaskDto) {
+  async create(dto: CreateTaskDto, autorId: number) {
     logger.info('Создание новой задачи');
 
     // проверка есть ли пользователь assignUser в базе
@@ -27,6 +27,7 @@ export class TaskService {
       title: dto.title,
       description: dto.description,
       assignId: dto.assignUserId,
+      autorId: autorId,
     });
 
     return task;
@@ -47,6 +48,13 @@ export class TaskService {
       include: [
         {
           model: UserEntity,
+          as: 'assignUser',
+          attributes: ['id', 'name', 'email'],
+          include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
+        },
+        {
+          model: UserEntity,
+          as: 'authorUser',
           attributes: ['id', 'name', 'email'],
           include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
         },
@@ -75,7 +83,20 @@ export class TaskService {
     const tasks = await TaskEntity.findAndCountAll({
       order: [[query.sortBy, query.sortDirection]],
       where,
-      include: [{ model: UserEntity, attributes: ['id', 'name', 'email'] }], // выводит информацию о пользователе-исполнителе задачи
+      include: [
+        {
+          model: UserEntity,
+          as: 'assignUser',
+          attributes: ['id', 'name', 'email'],
+          include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
+        },
+        {
+          model: UserEntity,
+          as: 'authorUser',
+          attributes: ['id', 'name', 'email'],
+          include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
+        },
+      ], // выводит информацию о пользователе-исполнителе задачи
       limit: query.limit,
       offset: query.offset,
     });

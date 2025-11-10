@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
-import { AuthGuard } from '../../cache/guard/auth.guard';
+import { AuthGuard } from '../../guard';
 import { validate } from '../../validate';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
 import { UserService } from './user.service';
@@ -11,10 +11,10 @@ export class UserController {
 
   constructor(@inject(UserService) private readonly userService: UserService) {
     this.router.post('/register', (req, res) => this.register(req, res));
+    this.router.get('/profile', AuthGuard, (req, res) => this.getUserProfile(req, res));
     this.router.get('/:id', (req, res) => this.getUserId(req, res));
     this.router.post('/login', (req, res) => this.postUserLogin(req, res));
     this.router.delete('', (req, res) => this.deleteUser(req, res));
-    this.router.get('/profile', AuthGuard, (req, res) => this.getUserProfile(req, res));
   }
 
   async register(req: Request, res: Response) {
@@ -39,7 +39,8 @@ export class UserController {
     res.json(result);
   }
   getUserProfile(req: Request, res: Response) {
-    // что тут происходит???
+    // мы из временного хранилища res.locals достаем пользователя, которого мы записали
+    // в auth.guard.ts когда вызывали get profile
     const user = res.locals.user;
     res.json(user);
   }

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { decode, verify } from 'jsonwebtoken';
-import { UserEntity } from '../../database/entities';
-import { UnauthorizedException } from '../../exceptions';
+import { UserEntity } from '../database/entities';
+import { UnauthorizedException } from '../exceptions';
 
 // это ф/я jsonwebtoken которая будет проверять токен
 export const AuthGuard = async (req: Request, res: Response, next: NextFunction) => {
