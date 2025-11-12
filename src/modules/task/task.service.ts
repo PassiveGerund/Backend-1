@@ -11,7 +11,7 @@ export class TaskService {
   constructor(@inject(CacheService) private readonly cacheService: CacheService) {}
 
   // Создание задачи
-  async create(dto: CreateTaskDto, autorId: number) {
+  async create(dto: CreateTaskDto, authorId: number) {
     logger.info('Создание новой задачи');
 
     // проверка есть ли пользователь assignUser в базе
@@ -27,7 +27,7 @@ export class TaskService {
       title: dto.title,
       description: dto.description,
       assignId: dto.assignUserId,
-      autorId: autorId,
+      authorId: authorId,
     });
 
     return task;

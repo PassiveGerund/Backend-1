@@ -34,7 +34,8 @@ export class TaskEntity extends Model {
 
   @BelongsTo(() => UserEntity, {
     foreignKey: 'assignId',
-    as 'assignUser', })
+    as: 'assignUser',
+  })
   public assignUser: UserEntity;
 
   // автор задачи
