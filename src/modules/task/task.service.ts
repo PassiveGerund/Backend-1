@@ -139,13 +139,73 @@ export class TaskService {
     return data;
   }
 
-  getMyAuthored() {
+  // получить задачу где юзер автор
+  async getMyAuthored(query: GetTaskDto, authorId: number) {
     logger.info('Список своих созданных задач');
-    return { id: 1 };
+
+    const tasks = await TaskEntity.findAndCountAll({
+      where: { authorId: authorId },
+      include: [
+        {
+          model: UserEntity,
+          as: 'assignUser',
+          attributes: ['id', 'name', 'email'],
+          include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
+        },
+        {
+          model: UserEntity,
+          as: 'authorUser',
+          attributes: ['id', 'name', 'email'],
+          include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
+        },
+      ], // выводит информацию о пользователе-исполнителе задачи
+      limit: query.limit,
+      offset: query.offset,
+    });
+
+    if (!tasks) {
+      throw new NotFoundException(`Задач не найдено`);
+    }
+    return {
+      total: tasks.count,
+      search: query.search,
+      limit: query.limit,
+      offset: query.offset,
+      data: tasks.rows,
+    };
   }
 
-  getMyAssigned() {
+  async getMyAssigned(query: GetTaskDto, assignId: number) {
     logger.info('Список своих назначенных задач');
-    return { id: 1 };
+    const tasks = await TaskEntity.findAndCountAll({
+      where: { assignId: assignId },
+      include: [
+        {
+          model: UserEntity,
+          as: 'assignUser',
+          attributes: ['id', 'name', 'email'],
+          include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
+        },
+        {
+          model: UserEntity,
+          as: 'authorUser',
+          attributes: ['id', 'name', 'email'],
+          include: [{ model: DepartmentEntity, attributes: ['id', 'title'] }],
+        },
+      ], // выводит информацию о пользователе-исполнителе задачи
+      limit: query.limit,
+      offset: query.offset,
+    });
+
+    if (!tasks) {
+      throw new NotFoundException(`Задач не найдено`);
+    }
+    return {
+      total: tasks.count,
+      search: query.search,
+      limit: query.limit,
+      offset: query.offset,
+      data: tasks.rows,
+    };
   }
 }

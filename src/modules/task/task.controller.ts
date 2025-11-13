@@ -14,8 +14,8 @@ export class TaskController {
     this.router.post('/', AuthGuard, (req, res) => this.create(req, res));
     this.router.get('', (req, res) => this.getTasks(req, res));
     this.router.get('/:id', (req, res) => this.getTaskById(req, res));
-    this.router.get('/my/authored', (req, res) => this.getMyAuthored(req, res));
-    this.router.get('/my/assigned', (req, res) => this.getMyAssigned(req, res));
+    this.router.get('/my/authored', AuthGuard, (req, res) => this.getMyAuthored(req, res));
+    this.router.get('/my/assigned', AuthGuard, (req, res) => this.getMyAssigned(req, res));
     this.router.put('/:id', (req, res) => this.updateTaskById(req, res));
     this.router.delete('/:id', (req, res) => this.deleteTaskById(req, res));
   }
@@ -38,13 +38,16 @@ export class TaskController {
     res.json(result);
   }
 
-  getMyAuthored(req: Request, res: Response) {
-    const result = this.service.getMyAuthored();
+  // мои задачи где я автор
+  async getMyAuthored(req: Request, res: Response) {
+    const query = validate(GetTaskDto, req.query);
+    const result = this.service.getMyAuthored(query, res.locals.user.id);
     res.json(result);
   }
 
-  getMyAssigned(req: Request, res: Response) {
-    const result = this.service.getMyAssigned();
+  async getMyAssigned(req: Request, res: Response) {
+    const query = validate(GetTaskDto, req.query);
+    const result = this.service.getMyAssigned(query, res.locals.user.id);
     res.json(result);
   }
 
