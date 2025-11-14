@@ -25,6 +25,7 @@ export class TaskEntity extends Model {
   })
   public description: string;
 
+  // исполнитель задачи
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
@@ -33,6 +34,20 @@ export class TaskEntity extends Model {
 
   @BelongsTo(() => UserEntity, {
     foreignKey: 'assignId',
+    as: 'assignUser',
   })
   public assignUser: UserEntity;
+
+  // автор задачи
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  public authorId: number;
+
+  @BelongsTo(() => UserEntity, {
+    foreignKey: 'authorId',
+    as: 'authorUser',
+  })
+  public authorUser: UserEntity;
 }
