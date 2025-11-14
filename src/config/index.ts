@@ -8,6 +8,7 @@ readEnv();
 const rawConfig = {
   port: process.env.PORT,
   redisUrl: process.env.REDIS_URL,
+  secret: process.env.SECRET,
   postgres: {
     host: process.env.POSTGRESSQL_HOST,
     port: process.env.POSTGRESSQL_PORT,

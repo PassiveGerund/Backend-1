@@ -15,4 +15,7 @@ export class AppConfigDto {
 
   @IsString()
   redisUrl: string;
+
+  @IsString()
+  secret: string;
 }

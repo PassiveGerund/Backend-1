@@ -1,6 +1,7 @@
 import { compare, hash } from 'bcryptjs';
 import { injectable } from 'inversify';
 import { sign } from 'jsonwebtoken';
+import { appConfig } from '../../config';
 import { DepartmentEntity, UserEntity } from '../../database/entities';
 import { BadRequestException, NotFoundException, UnauthorizedException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
@@ -62,7 +63,7 @@ export class UserService {
     // return exist;
     // теперь перед после авторизации создаем токен:
     // функцией sign из jsonbtoken. Она берет id пользователя, любое секретное слово и время жизни токена
-    const accessToken = sign({ id: exist.id }, 'my-secret-key', { expiresIn: '1h' }); // <-- секрет в переменных окружения!
+    const accessToken = sign({ id: exist.id }, appConfig.secret, { expiresIn: '1h' }); // <-- секрет в переменных окружения!
     // и возвращает токен
     return { accessToken };
   }

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { decode, verify } from 'jsonwebtoken';
+import { appConfig } from '../config';
 import { UserEntity } from '../database/entities';
 import { UnauthorizedException } from '../exceptions';
 
@@ -18,7 +19,7 @@ export const AuthGuard = async (req: Request, res: Response, next: NextFunction)
 
   try {
     // добавляем наше кодовое слово и проверяем на совпадение
-    verify(token, 'my-secret-key'); // <-- секрет из env!
+    verify(token, appConfig.secret); // <-- секрет из env!
   } catch (error) {
     throw new UnauthorizedException(); // Unauthorized
   }
