@@ -41,13 +41,13 @@ export class TaskController {
   // мои задачи где я автор
   async getMyAuthored(req: Request, res: Response) {
     const query = validate(GetTaskDto, req.query);
-    const result = this.service.getMyAuthored(query, res.locals.user.id);
+    const result = await this.service.getMyAuthored(query, res.locals.user.id);
     res.json(result);
   }
 
   async getMyAssigned(req: Request, res: Response) {
     const query = validate(GetTaskDto, req.query);
-    const result = this.service.getMyAssigned(query, res.locals.user.id);
+    const result = await this.service.getMyAssigned(query, res.locals.user.id);
     res.json(result);
   }
 
