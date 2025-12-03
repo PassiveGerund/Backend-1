@@ -27,10 +27,30 @@ export class UserEntity extends Model {
   public email: string;
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  })
+  public isActive: boolean;
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   public password: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: 'user',
+  })
+  public role: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  public blockReason: string;
 
   @ForeignKey(() => DepartmentEntity)
   @Column({

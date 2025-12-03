@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
-import { AuthGuard } from '../../guard';
+import { AuthGuard, RoleGuard } from '../../guard';
 import { validate } from '../../validate';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
 import { UserService } from './user.service';
@@ -14,6 +14,8 @@ export class UserController {
     this.router.get('/profile', AuthGuard, (req, res) => this.getUserProfile(req, res));
     this.router.get('/:id', (req, res) => this.getUserId(req, res));
     this.router.post('/login', (req, res) => this.postUserLogin(req, res));
+    this.router.post('/:id/block', AuthGuard, RoleGuard, (req, res) => this.blockUser(req, res));
+    this.router.post('/:id/ubblock', AuthGuard, RoleGuard, (req, res) => this.unblockUser(req, res));
     this.router.delete('', (req, res) => this.deleteUser(req, res));
   }
 
@@ -42,6 +44,19 @@ export class UserController {
     // мы из временного хранилища res.locals достаем пользователя, которого мы записали
     // в auth.guard.ts когда вызывали get profile
     const user = res.locals.user;
+    res.json(user);
+  }
+  // блокировка пользователя
+  async blockUser(req: Request, res: Response) {
+    const params = validate(UserIdDto, req.params);
+    const user = this.userService.changeIsActive(req.params.id, false);
+    res.json(user);
+  }
+
+  // разблокировка пользователя
+  async unblockUser(req: Request, res: Response) {
+    const params = validate(UserIdDto, req.params);
+    const user = this.userService.changeIsActive(req.params.id, true);
     res.json(user);
   }
 }
