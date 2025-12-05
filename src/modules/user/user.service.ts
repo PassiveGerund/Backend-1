@@ -46,17 +46,15 @@ export class UserService {
   }
 
   // блокировка пользователя
-  async changeIsActive(userId: string, newIsActive: boolean) {
-    await UserEntity.update({ isActive: newIsActive }, { where: { id: userId } });
+  async changeIsActive(userId: string, blockReason: string, newIsActive: boolean) {
+    await UserEntity.update({ isActive: newIsActive, blockReason: blockReason }, { where: { id: userId } });
     if (newIsActive) {
       logger.info(`Пользователь разблокирован  `);
     } else {
       logger.info(`Пользователь заблокирован  `);
-      await UserEntity.update({ blockReason: 'причина блокировки как сюда вписать?' }, { where: { id: userId } });
-      // а как менять значение blockReason?
     }
 
-    return { success: true, blockReason: 'причина блокировки как сюда вписать?' };
+    return { success: true, blockReason: blockReason };
   }
 
   // Авторизация пользователя

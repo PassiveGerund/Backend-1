@@ -48,15 +48,13 @@ export class UserController {
   }
   // блокировка пользователя
   async blockUser(req: Request, res: Response) {
-    const params = validate(UserIdDto, req.params);
-    const user = this.userService.changeIsActive(req.params.id, false);
+    const user = await this.userService.changeIsActive(req.params.id, req.body.blockReason, false);
     res.json(user);
   }
 
   // разблокировка пользователя
   async unblockUser(req: Request, res: Response) {
-    const params = validate(UserIdDto, req.params);
-    const user = this.userService.changeIsActive(req.params.id, true);
+    const user = await this.userService.changeIsActive(req.params.id, req.body.blockReason, true);
     res.json(user);
   }
 }
