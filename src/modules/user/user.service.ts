@@ -3,7 +3,7 @@ import { injectable } from 'inversify';
 import { sign } from 'jsonwebtoken';
 import { appConfig } from '../../config';
 import { DepartmentEntity, UserEntity } from '../../database/entities';
-import { BadRequestException, NotFoundException, UnauthorizedException } from '../../exceptions';
+import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
 
@@ -44,6 +44,19 @@ export class UserService {
     logger.info('Получить пользователя по id');
     return { ...dto };
   }
+
+  // блокировка пользователя
+  async changeIsActive(userId: string, blockReason: string, newIsActive: boolean) {
+    await UserEntity.update({ isActive: newIsActive, blockReason: blockReason }, { where: { id: userId } });
+    if (newIsActive) {
+      logger.info(`Пользователь разблокирован  `);
+    } else {
+      logger.info(`Пользователь заблокирован  `);
+    }
+
+    return { success: true, blockReason: blockReason };
+  }
+
   // Авторизация пользователя
   async postUserLogin(dto: LoginUserDto) {
     logger.info('Авторизация пользователя');
@@ -54,6 +67,10 @@ export class UserService {
     });
     if (!exist) {
       throw new NotFoundException(`Пользователь с email ${dto.email} не найден.`);
+    }
+
+    if (exist.isActive === false) {
+      throw new ForbiddenException('Пользователь заблокирован');
     }
 
     const passwordAreEquals = await compare(dto.password, exist.password);
