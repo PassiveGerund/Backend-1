@@ -1,4 +1,5 @@
 import { compare, hash } from 'bcryptjs';
+import { CronJob } from 'cron';
 import { injectable } from 'inversify';
 import { sign } from 'jsonwebtoken';
 import { appConfig } from '../../config';
@@ -9,6 +10,23 @@ import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
 
 @injectable()
 export class UserService {
+  private readonly updateDomainsJob = new CronJob('0 8 * * * *', () => this.loadDomains(), null, true);
+  tmpDomains: string[] = []; // что такое string[] ?
+
+  constructor() {
+    this.loadDomains();
+  }
+
+  async loadDomains() {
+    // запрашиваем список одноразовых доментов
+    const response = await fetch(
+      'https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/refs/heads/main/disposable_email_blocklist.conf',
+    );
+    const domains = await response.text();
+    this.tmpDomains = domains.split('\n');
+    logger.info(`Загружен список из ${this.tmpDomains.length} доменов `);
+  }
+
   // Регистрация пользователя
   async register(data: RegisterUserDto) {
     logger.info('Регистрация пользователя');
@@ -29,6 +47,11 @@ export class UserService {
       throw new BadRequestException(`Департамента ${data.departmentId} не существует`);
     }
 
+    // проверяем указанную почту по базе одноразовых доменов
+    if (this.tmpDomains.includes(data.email.split('@')[1])) {
+      throw new BadRequestException('Email в списке одноразовых доменов');
+    }
+    // проверки прошли, хэшируем пароль
     const hashedPassword = await hash(data.password, 10);
 
     const user = await UserEntity.create({
