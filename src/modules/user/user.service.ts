@@ -6,6 +6,8 @@ import { appConfig } from '../../config';
 import { DepartmentEntity, UserEntity } from '../../database/entities';
 import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
+import { MailService } from '../mail/mail.service';
+import { TelegramService } from '../telegram/telegram.service';
 import { LoginUserDto, RegisterUserDto, UserIdDto } from './dto';
 
 @injectable()
@@ -13,7 +15,10 @@ export class UserService {
   private readonly updateDomainsJob = new CronJob('0 8 * * * *', () => this.loadDomains(), null, true);
   tmpDomains: string[] = []; // что такое string[] ?
 
-  constructor() {
+  constructor(
+    private readonly telegramService: TelegramService,
+    private readonly mailService: MailService,
+  ) {
     this.loadDomains();
   }
 
@@ -59,6 +64,23 @@ export class UserService {
       email: data.email,
       password: hashedPassword,
       departmentId: data.departmentId,
+    });
+
+    const admins = await UserEntity.findAll({ where: { role: ['admin'] } });
+
+    for (const admin of admins) {
+      if (admin.tg !== null) {
+        await this.telegramService.bot.telegram.sendMessage(
+          admin.tg,
+          `регистрация нового пользователя   ${user.name} \n ${user.email}`,
+        );
+      }
+    }
+    await this.mailService.transport.sendMail({
+      from: appConfig.smtpUser + '@yandex.ru',
+      to: user.email,
+      subject: 'Спасибо за регистрацию',
+      html: `<h1>Спасибо за регистрацию</h1>\n <p>Вы: ${user.name} </p>`,
     });
     return user;
   }

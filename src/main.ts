@@ -12,15 +12,17 @@ import logger from './logger/pino.logger';
 import { errorHandler } from './middlewares/error-handler';
 import { DepartmentController } from './modules/department/department.controller';
 import DepartmentModule from './modules/department/department.module';
+import MailModule from './modules/mail/mail.module';
 import { TaskController } from './modules/task/task.controller';
 import TaskModule from './modules/task/task.module';
+import TelegramModule from './modules/telegram/telegram.module';
 import { UserController } from './modules/user/user.controller';
 import UserModule from './modules/user/user.module';
 
 const bootstrap = async () => {
   await connectToPostgres();
   const appContainer = new Container();
-  appContainer.loadSync(TaskModule, UserModule, CacheModule, DepartmentModule);
+  appContainer.loadSync(TaskModule, UserModule, CacheModule, DepartmentModule, TelegramModule, MailModule);
 
   const server = express(); // создаем сервер
   server.use(cors({ origin: '*' }));
