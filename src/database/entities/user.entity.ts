@@ -59,6 +59,12 @@ export class UserEntity extends Model {
   public tg: string;
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  public vcode: string;
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
     defaultValue: false,

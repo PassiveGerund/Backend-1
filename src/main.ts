@@ -12,6 +12,7 @@ import logger from './logger/pino.logger';
 import { errorHandler } from './middlewares/error-handler';
 import { DepartmentController } from './modules/department/department.controller';
 import DepartmentModule from './modules/department/department.module';
+import { MailController } from './modules/mail/mail.controller';
 import MailModule from './modules/mail/mail.module';
 import { TaskController } from './modules/task/task.controller';
 import TaskModule from './modules/task/task.module';
@@ -31,10 +32,12 @@ const bootstrap = async () => {
   const taskController = appContainer.get(TaskController);
   const userController = appContainer.get(UserController);
   const departmentController = appContainer.get(DepartmentController);
+  const mailController = appContainer.get(MailController);
 
   server.use('/task', taskController.router);
   server.use('/user', userController.router);
   server.use('/department', departmentController.router);
+  server.use('/mail', mailController.router);
 
   server.post('*', (req, res) => {
     throw new NotFoundException();
