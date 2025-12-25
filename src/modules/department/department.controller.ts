@@ -16,7 +16,7 @@ export class DepartmentController {
 
   async create(req: Request, res: Response) {
     const dto = validate(CreateDepartmentDto, req.body);
-    const result = await this.service.create(dto, res.locals.user.id);
+    const result = await this.service.create(dto, res.locals.user.name);
     res.json(result);
   }
 

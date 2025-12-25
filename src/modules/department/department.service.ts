@@ -15,24 +15,23 @@ export class DepartmentService {
   ) {}
 
   // Создание департамета
-  async create(dto: CreateDepartmentDto, authorId: number) {
+  async create(dto: CreateDepartmentDto, authorName: string) {
     logger.info('Создание нового департамента');
 
     const department = await DepartmentEntity.create({
       title: dto.title,
       description: dto.description,
-      authorId: authorId,
+      authorName: authorName,
     });
 
     // отправляем админам уведомление в телеграм:
     const admins = await UserEntity.findAll({ where: { role: ['admin'] } });
-    const author = await UserEntity.findOne({ where: { id: authorId } });
 
     for (const admin of admins) {
       if (admin.tg !== null) {
         await this.telegramService.bot.telegram.sendMessage(
           admin.tg,
-          `Создан новый департамент   ${department.title} \n автор ${author} видимо он нашел весь объект юзера, а как получить только имя?`,
+          `Создан новый департамент   ${department.title} \n автор ${authorName} `,
         );
       }
     }

@@ -1,5 +1,4 @@
-import { BelongsTo, Column, DataType, Model, Table } from 'sequelize-typescript';
-import { UserEntity } from './user.entity';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 @Table({
   tableName: 'departments',
@@ -24,17 +23,4 @@ export class DepartmentEntity extends Model {
     allowNull: true,
   })
   public description: string | null;
-
-  // автор департамента
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  public authorId: number;
-
-  @BelongsTo(() => UserEntity, {
-    foreignKey: 'authorId',
-    as: 'authorUser',
-  })
-  public authorUser: UserEntity;
 }
