@@ -9,6 +9,10 @@ const rawConfig = {
   port: process.env.PORT,
   redisUrl: process.env.REDIS_URL,
   secret: process.env.SECRET,
+  tg: process.env.TG,
+  smtpUser: process.env.smtpUser,
+  smtpPass: process.env.smtpPass,
+
   postgres: {
     host: process.env.POSTGRESSQL_HOST,
     port: process.env.POSTGRESSQL_PORT,

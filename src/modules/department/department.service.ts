@@ -1,22 +1,41 @@
 import { inject, injectable } from 'inversify';
 import { CacheService } from '../../cache/cache.service';
+import { UserEntity } from '../../database/entities';
 import { DepartmentEntity } from '../../database/entities/department.entity';
 import { NotFoundException } from '../../exceptions';
 import logger from '../../logger/pino.logger';
+import { TelegramService } from '../telegram/telegram.service';
 import { CreateDepartmentDto, DepartmentIdDto } from './dto';
 
 @injectable()
 export class DepartmentService {
-  constructor(@inject(CacheService) private readonly cacheService: CacheService) {}
+  constructor(
+    @inject(CacheService) private readonly cacheService: CacheService,
+    private readonly telegramService: TelegramService,
+  ) {}
 
   // Создание департамета
-  async create(dto: CreateDepartmentDto) {
+  async create(dto: CreateDepartmentDto, authorName: string) {
     logger.info('Создание нового департамента');
 
     const department = await DepartmentEntity.create({
       title: dto.title,
       description: dto.description,
+      authorName: authorName,
     });
+
+    // отправляем админам уведомление в телеграм:
+    const admins = await UserEntity.findAll({ where: { role: ['admin'] } });
+
+    for (const admin of admins) {
+      if (admin.tg !== null) {
+        await this.telegramService.bot.telegram.sendMessage(
+          admin.tg,
+          `Создан новый департамент   ${department.title} \n автор ${authorName} `,
+        );
+      }
+    }
+
     return department;
   }
 

@@ -18,4 +18,13 @@ export class AppConfigDto {
 
   @IsString()
   secret: string;
+
+  @IsString()
+  tg: string;
+
+  @IsString()
+  smtpUser: string;
+
+  @IsString()
+  smtpPass: string;
 }

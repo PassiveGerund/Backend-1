@@ -52,6 +52,25 @@ export class UserEntity extends Model {
   })
   public blockReason: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  public tg: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  public vcode: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  public approved: boolean;
+
   @ForeignKey(() => DepartmentEntity)
   @Column({
     type: DataType.INTEGER,
